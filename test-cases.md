@@ -57,7 +57,7 @@
 ## 2. INSURANCE VERIFICATION
 
 ### Scenario 2.1: Accepted Insurance
-**User:** "Does this patient have Blue Cross Blue Shield?"
+**User:** "Do we accept Blue Cross Blue Shield?"
 
 **Expected Agent Behavior:**
 - Calls `check_insurance` with "Blue Cross Blue Shield"
