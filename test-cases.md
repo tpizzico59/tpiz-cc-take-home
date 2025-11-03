@@ -1,5 +1,9 @@
 # Test Scenarios
 
+Important: At the beginning of a session with the LLM, clear the appoinemnts table: 
+
+psql -d care_coordinator -c "TRUNCATE TABLE appointments RESTART IDENTITY CASCADE;
+
 ## 1. BASIC APPOINTMENT BOOKING (Happy Path)
 
 ### Scenario 1.1: Complete Appointment Booking Flow
@@ -480,66 +484,3 @@
 ✓ Offers relevant help
 
 ---
-
-## DEMO PRESENTATION SCRIPT (20 Minutes)
-
-### Introduction (2 min)
-"Today I'm demonstrating a Care Coordinator Assistant that helps nurses efficiently schedule appointments using AI and the ReAct pattern."
-
-### Part 1: Basic Booking (5 min)
-- Show complete flow: patient search → provider selection → insurance check → slot selection → confirmation
-- Highlight: "Notice how it gathers information progressively and uses tools proactively"
-
-### Part 2: Intelligence Features (5 min)
-- Show referral awareness
-- Show NEW vs ESTABLISHED determination
-- Show insurance verification with self-pay fallback
-- Highlight: "It uses patient history to make smart suggestions"
-
-### Part 3: Edge Cases (4 min)
-- Show rejected insurance handling
-- Show provider unavailability with alternatives
-- Show missing referral warning
-- Highlight: "It gracefully handles real-world scenarios"
-
-### Part 4: Technical Architecture (3 min)
-- Show ReAct loop in action (tool calls in browser network tab)
-- Explain: Frontend manages state, backend is stateless
-- Show: Database stores all bookings
-
-### Conclusion (1 min)
-- Recap: Modern AI approach, production-ready patterns, handles edge cases
-- Answer questions
-
----
-
-## SUCCESS METRICS
-
-After testing all scenarios, the system should demonstrate:
-
-✓ **100% Coverage** of required features from assignment
-✓ **Proactive behavior** - anticipates needs, doesn't just react
-✓ **Error resilience** - handles edge cases gracefully
-✓ **Conversational flow** - natural, not robotic
-✓ **Business rule compliance** - NEW/ESTABLISHED, hours, referrals
-✓ **Data accuracy** - never makes up information
-✓ **Tool efficiency** - uses tools appropriately, no redundant calls
-✓ **User experience** - clear confirmations, helpful suggestions
-
----
-
-## NOTES FOR INTERVIEWER
-
-**Key Differentiators to Highlight:**
-1. ReAct pattern (not hardcoded rules)
-2. Stateless backend (scalable architecture)
-3. Proactive tool usage (smart suggestions)
-4. Patient context awareness (referrals, history)
-5. Graceful error handling
-6. Production-ready database design
-
-**Be Ready to Explain:**
-- Why ReAct over rule-based approach
-- How tool schemas guide LLM behavior
-- Trade-offs in architecture decisions
-- How you'd scale this to production
