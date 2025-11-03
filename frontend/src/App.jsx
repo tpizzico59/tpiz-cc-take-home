@@ -73,45 +73,12 @@ export default function App() {
             New chat
           </button>
         </div>
-
-        <div className="flex-1 overflow-y-auto p-2">
-          <div className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-sm text-left text-white/70">
-              <MessageSquare className="w-4 h-4 flex-shrink-0" />
-              <span className="truncate">Current conversation</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="p-2 border-t border-white/10 space-y-1">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-sm text-white/70">
-            <HelpCircle className="w-4 h-4" />
-            Help & Support
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-sm text-white/70">
-            <Settings className="w-4 h-4" />
-            Settings
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-sm text-white/70">
-            <User className="w-4 h-4" />
-            Profile
-          </button>
-        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col relative">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-white/5 transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Care Coordinator</span>
-          </div>
           <div className="w-9" /> {/* Spacer for centering */}
         </div>
 
