@@ -164,17 +164,39 @@ def check_appointment_history(patient_id: int, provider_id: int):
 
 
 def list_available_slots(provider_id: int, department_name: str, start_date: str, end_date: str, duration_minutes: int):
-    """List available appointment slots within date range."""
-    # Get department hours
+    """List available appointment slots within date range, excluding already booked times."""
+    
+    # Get department info
     dept = db.fetch_one(
-        "SELECT hours FROM departments WHERE provider_id = %s AND name = %s",
+        "SELECT id, hours FROM departments WHERE provider_id = %s AND name = %s",
         (provider_id, department_name)
     )
     
     if not dept:
         return {"error": "Department not found"}
     
-    # Parse hours (format: "M-F 9am-5pm" or "M-W 9am-5pm")
+    department_id = dept['id']
+    
+    # Get existing appointments to exclude booked slots ***
+    booked_appointments = db.fetch_all(
+        """
+        SELECT appointment_date, appointment_time
+        FROM appointments
+        WHERE provider_id = %s 
+        AND department_id = %s
+        AND appointment_date BETWEEN %s AND %s
+        AND status IN ('scheduled', 'confirmed')
+        """,
+        (provider_id, department_id, start_date, end_date)
+    )
+    
+    # Create set of booked times for fast lookup
+    booked_slots = set()
+    for apt in booked_appointments:
+        slot_datetime = datetime.combine(apt['appointment_date'], apt['appointment_time'])
+        booked_slots.add(slot_datetime)
+    
+    # Parse hours (format: "M-F 9am-5pm")
     hours = dept['hours']
     days_part, time_part = hours.split(' ', 1)
     start_time, end_time = time_part.split('-')
@@ -188,21 +210,19 @@ def list_available_slots(provider_id: int, department_name: str, start_date: str
     if 'pm' in end_time and end_hour != 12:
         end_hour += 12
     
-    # Parse days (M-F, M-W, etc.)
+    # Parse days
     day_map = {'M': 0, 'T': 1, 'W': 2, 'Th': 3, 'F': 4, 'S': 5, 'Su': 6}
     if '-' in days_part:
-        # Range like M-F
         start_day = days_part.split('-')[0]
         end_day = days_part.split('-')[1]
-        # Handle Th and Tu specially
         if days_part == 'Tu-Th':
-            valid_days = [1, 2, 3]  # Tue, Wed, Thu
+            valid_days = [1, 2, 3]
         else:
             valid_days = list(range(day_map[start_day], day_map[end_day] + 1))
     else:
         valid_days = [day_map[days_part]]
     
-    # Generate slots
+    # Generate available slots
     slots = []
     current = datetime.strptime(start_date, '%Y-%m-%d')
     end = datetime.strptime(end_date, '%Y-%m-%d')
@@ -213,12 +233,17 @@ def list_available_slots(provider_id: int, department_name: str, start_date: str
             end_of_day = current.replace(hour=end_hour, minute=0, second=0)
             
             while slot_time + timedelta(minutes=duration_minutes) <= end_of_day:
-                slots.append(slot_time.isoformat())
+                if slot_time not in booked_slots:
+                    slots.append(slot_time.isoformat())
                 slot_time += timedelta(minutes=duration_minutes)
         
         current += timedelta(days=1)
     
-    return {"slots": slots[:20]}  # Limit to 20 slots
+    return {
+        "slots": slots[:20],
+        "total_available": len(slots),
+        "showing": f"First 20 of {len(slots)} available slots"
+    }
 
 
 def create_appointment(patient_id: int, provider_id: int, department_name: str, datetime_str: str, appointment_type: str):
