@@ -1,4 +1,4 @@
-# Kouper Care Coordinator Assistant
+# Care Coordinator Assistant
 
 AI-powered healthcare scheduling assistant using ReAct pattern with OpenAI function calling. This intelligent care coordinator is assistant first, agent second; it allows for actual appointment scheduling as well as pure information retrieval.  
 
